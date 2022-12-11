@@ -1,4 +1,4 @@
-# TrialNodeApp
+# RKS Bank (Backend)
 
 ### Descriptions
 This app is a banking server NodeJS app to be used as a server for banking applications.
