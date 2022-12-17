@@ -29,20 +29,33 @@ const handleLogin = async (req, res) => {
 
         if (match) {
             //give access and generate access token using jwt
+            const data = foundUser
             const accessToken = jwt.sign({
-                username: username,
-                roles: foundUser.roles,
+                userInfo: {
+                    username: foundUser.username,
+                    firstname: foundUser.firstname,
+                    customer_id: foundUser.customer_id,
+                    roles: foundUser.roles
+                }
             }, process.env.JWT_ACCESS_TOKEN_SECRET,
                 { expiresIn: '500s' })
 
             const refreshToken = jwt.sign({
-                username: username,
-                roles: foundUser.roles,
+                userInfo: {
+                    username: foundUser.username,
+                    firstname: foundUser.firstname,
+                    customer_id: foundUser.customer_id,
+                    roles: foundUser.roles
+                } 
+
             }, process.env.JWT_ACCESS_TOKEN_SECRET,
                 { expiresIn: '500s' })
 
             foundUser.refreshToken = refreshToken;
-            const result = await foundUser.save();
+            const result = await foundUser.save().catch(err => {
+                console.log(err.name, err.message)
+                res.sendStatus(500) // Internal server error
+            });
 
             //Issuing cookie
             //HTTP-Only cookie is not available to JS. So cannot be stolen by hackers

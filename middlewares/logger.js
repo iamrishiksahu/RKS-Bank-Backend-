@@ -10,7 +10,7 @@ const logEvents = async (message, filename) => {
 
     const dateTime = format(new Date(), 'dd-MM-yyyy\tHH:mm:ss')
 
-    const logString = dateTime +  '\t' + randomUUID() +  '\t' +  message;
+    const logString = dateTime +  '\t' + randomUUID() +  '\t' +  message + '\n';
 
     console.error(logString);
 
@@ -26,7 +26,7 @@ const logEvents = async (message, filename) => {
                 console.log(err);
             }
         }
-        await fs.promises.writeFile(path.join(__dirname, '..', 'logs', filename), logString)
+        await fs.promises.appendFile(path.join(__dirname, '..', 'logs', filename), logString)
     }catch(err){
         console.error(err);
     }

@@ -2,8 +2,7 @@ const express = require('express')
 const route = express.Router()
 const path = require('path');
 const verfyJWT = require('../middlewares/verifyJWT');
-
-
+const accountRouter = require('./accountRoute');
 
 const rootRouter = (app) => {
 
@@ -29,6 +28,8 @@ const rootRouter = (app) => {
 
     /** Verifying auth to serve the below protected routes */
     app.use('/account', verfyJWT)
+    app.use('/account',require('./accountRoute'))
+
 
 
     /** Routing protected routes */

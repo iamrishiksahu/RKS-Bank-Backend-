@@ -12,8 +12,8 @@ const verifyJWT = async (req,res, next) => {
     jwt.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET, (err, decoded) => {
 
         if(err) return res.sendStatus(403) // Something went wrong
-        req.username = decoded.username,
-        req.roles = decoded.roles
+        req.username = decoded.userInfo.username,
+        req.roles = decoded.userInfo.roles
 
         next()
     })
