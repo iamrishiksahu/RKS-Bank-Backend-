@@ -1,7 +1,7 @@
 {
   "name": "RKS Bank (Backend)",
   "version": "1.0.0",
-  "description": "This app is a banking server NodeJS app to be used as a server for banking applications.  ",
+  "description": "This app is a banking server NodeJS app to be used as a server for basic banking applications.  ",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
