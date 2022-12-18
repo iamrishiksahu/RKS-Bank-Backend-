@@ -1,7 +1,6 @@
 const Account = require('../../model/Account');
 const Customer = require('../../model/Customer');
 const Transaction = require('../../model/Transaction')
-const { getAccountBalance } = require('../account/balanceController');
 
 
 const performTransaction = async (req, res) => {
@@ -75,62 +74,62 @@ const performTransaction = async (req, res) => {
     })
 
 
-/** Record a transaction */
+    /** Record a transaction */
 
-Transaction.create({
-    transaction_id: Date.now().toString(16),
-    transaction_status: 'SUCCESS', // SUCCESS | FAILURE | PENGING
-    transaction_amt: tr_amt,
-    reference_no: tr_ref, // Cheque No, UTR, etc
-    transaction_from_acc: tr_from, // Debit Account
-    transaction_to: tr_to, // A/c no / UPI / anything
-    transaction_provider: tr_provider,
-    // UPI | CHQ | CSHWDRL | CRDT | DEBITCARD | ATM | NEFT | RTGS | OTHERS
-    transaction_purpose: tr_purpose,
-    transaction_by: customerID, // Customer ID
-    balance_after_transaction: afterTransactionBalance,
-    transaction_date: Date.now(),
-    transaction_notes: tr_notes,
+    Transaction.create({
+        transaction_id: Date.now().toString(16),
+        transaction_status: 'SUCCESS', // SUCCESS | FAILURE | PENGING
+        transaction_amt: tr_amt,
+        reference_no: tr_ref, // Cheque No, UTR, etc
+        transaction_from_acc: tr_from, // Debit Account
+        transaction_to: tr_to, // A/c no / UPI / anything
+        transaction_provider: tr_provider,
+        // UPI | CHQ | CSHWDRL | CRDT | DEBITCARD | ATM | NEFT | RTGS | OTHERS
+        transaction_purpose: tr_purpose,
+        transaction_by: customerID, // Customer ID
+        balance_after_transaction: afterTransactionBalance,
+        transaction_date: Date.now(),
+        transaction_notes: tr_notes,
 
-}).catch(async (err) => {
-    /** Reverse transaction */
-    const args = {
-        amount: tr_amt,
-        reverse_debit: true,
-        reverse_credit: tr_to.isInteger
-    }
-    await reverseTransaction(args, senderAccountDetails, recieverAccountDetails)
-    return res.status(500).json({ message: 'Something went wrong!', err })
-}).then((data) => {
+    }).catch(async (err) => {
+        /** Reverse transaction */
+        const args = {
+            amount: tr_amt,
+            reverse_debit: true,
+            reverse_credit: tr_to.isInteger
+        }
+        await reverseTransaction(args, senderAccountDetails, recieverAccountDetails)
+        return res.status(500).json({ message: 'Something went wrong!', err })
+    }).then((data) => {
 
-    return res.status(301).json({ message: 'Transaction recorded succefully!', data })
-
-})
-
-
-const reverseTransaction = async (arg, sender, receiver) => {
-
-    // Reversing debit
-    sender.financial_info.account_balance = sender.financial_info.account_balance + arg.amount
-
-    await sender.save().catch(err => {
-        return res.status(500).json({ message: 'Transaction has failed! If your amount has been debited, kindly contact customer care immediatedly', err })
+        return res.status(301).json({ message: 'Transaction recorded succefully!', data })
 
     })
 
-    // Reversing the credit
-    if (arg.reverse_credit) {
-        
-        receiver.financial_info.account_balanace = receiver.financial_info.account_balanace - arg.amount
 
-        await receiver.save().catch(err => {
+    const reverseTransaction = async (arg, sender, receiver) => {
+
+        // Reversing debit
+        sender.financial_info.account_balance = sender.financial_info.account_balance + arg.amount
+
+        await sender.save().catch(err => {
             return res.status(500).json({ message: 'Transaction has failed! If your amount has been debited, kindly contact customer care immediatedly', err })
 
         })
+
+        // Reversing the credit
+        if (arg.reverse_credit) {
+
+            receiver.financial_info.account_balanace = receiver.financial_info.account_balanace - arg.amount
+
+            await receiver.save().catch(err => {
+                return res.status(500).json({ message: 'Transaction has failed! If your amount has been debited, kindly contact customer care immediatedly', err })
+
+            })
+        }
+
+
     }
-
-
-}
 }
 
 module.exports = { performTransaction }

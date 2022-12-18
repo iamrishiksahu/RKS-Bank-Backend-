@@ -1,8 +1,7 @@
-const { format } = require('date-fns');
-const { ALLOWED_FOR_ACCOUNT_CREATION, ALLOWED_FOR_ACCOUNT_DELETION } = require('../../config/allowedRoles');
-const Account = require('../../model/Account');
-const User = require('../../model/User');
-const Customer = require('../../model/Customer');
+const { format } = require('date-fns')
+const { ALLOWED_FOR_ACCOUNT_CREATION, ALLOWED_FOR_ACCOUNT_DELETION } = require('../../config/allowedRoles')
+const Account = require('../../model/Account')
+const Customer = require('../../model/Customer')
 
 const getAccountBalance = async (req, res) => {
     
@@ -39,18 +38,36 @@ const getAccountInfo = async (req, res) => {
 
 const updateAccountInfo = async (req, res) => {
 
-    const { account_number, accountHolders, accType, currency, homeBranch, cifn, nominees } = req.body
+    const { account_number, accountHolders, accType, currency, homeBranch, nominees } = req.body
+
+    if(!account_number){
+        return res.sendStatus(400) // Bad request
+
+    }
 
     const accountDetails = await Account.findOne({ account_number: account_number })
         .catch((err) => {
             return res.status(500).json({ message: 'Something went wrong!', err })
         })
 
-  
+
+    
+    accountDetails.account_holders = accountHolders.length > 0 ? accountHolders : accountDetails.account_holders
+
+    accountDetails.account_type = accType?accType:accountDetails.account_type
+    accountDetails.currency = currency?currency:accountDetails.currency
+    accountDetails.home_branch = homeBranch?homeBranch:accountDetails.home_branch
+    accountDetails.nominees = nominees?nominees:accountDetails.nominees
+    
+    await accountDetails.save().catch(err=> {
+        return res.status(500).json({message: `Something went wrong!`, err})
+    }).then((data) => {
+        return res.status(201).json({message: `Account - ${account_number} updated successfully!`, data})
+
+    })
+        
 
 
-
-    res.send(`Date created: ${creationDate}`)
 }
 
 const createNewAccount = async (req, res) => {
@@ -76,7 +93,7 @@ const createNewAccount = async (req, res) => {
 
     const { accountHolders, accType, homeBranch, nominees, currency, accAddress } = req.body
 
-    if (!accountHolders || !accType || !homeBranch) res.sendStatus(400)
+    if (!accountHolders || !accType || !homeBranch) return res.sendStatus(400)
 
     /** Check if account already exists */
 

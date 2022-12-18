@@ -22,10 +22,6 @@ const rootRouter = (app) => {
     app.use('/register', require('./register'))
     app.use('/logout', require('./logout'))
 
-    app.use('/products', (req, res) => {
-        res.json({ product: 'this is a product!' })
-    })
-
     /** Verifying auth to serve the below protected routes */
     app.use('/account', verfyJWT)
     app.use('/account',require('./accountRoute'))

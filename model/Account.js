@@ -33,7 +33,7 @@ const accountSchema = mongoose.Schema({
         type: String,
         default: 'INR'
     },
-    account_holders: [Number], //customer ids
+    account_holders: [Number], // Aadhaar Numbers
     address: String,
     home_branch: String,
     nominees: [String],

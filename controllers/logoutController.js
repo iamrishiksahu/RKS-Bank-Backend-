@@ -30,8 +30,6 @@ const handleLogout = async (req, res) =>{
 
     const result = await foundUser.save()
 
-    console.log(result)
-
     res.status(201).json({message: 'Logged out successfully!'})
 
 

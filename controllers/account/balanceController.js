@@ -16,14 +16,8 @@ const getAccountBalance = async (req, res) => {
     return res.status(201).json({balance: accountDetails.financial_info.account_balance}) 
 }
 
-const updateAccountBalance = (req, res) => {
-
-
-    res.send('Account balanace updated!')
-}
 
 
 
 
-
-module.exports = {getAccountBalance, updateAccountBalance}
+module.exports = {getAccountBalance}

@@ -18,7 +18,6 @@ router.post('/delete', deleteAccount)
 
 /** Balance Routes */
 router.get('/balance', getAccountBalance);
-router.post('/balance_update', updateAccountBalance) // update balance after every transaction
 
 /** Transaction Router */
 router.post('/transaction', performTransaction)
